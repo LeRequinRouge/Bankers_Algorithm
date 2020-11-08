@@ -1,0 +1,88 @@
+// Banker's Algorithm heavily influenced by https://www.geeksforgeeks.org/bankers-algorithm-in-operating-system-2/
+
+#include <iostream>
+
+using std::cout;
+
+int main() {
+
+	int processes = 7;
+	int resources = 5;
+
+	int allocate[7][5] = { { 1, 5, 3, 2, 0 }, 
+						   { 2, 1, 5, 3, 4 }, 
+					  	 { 7, 0, 1, 0, 9 }, 
+						   { 3, 5, 5, 2, 8 },
+						   { 1, 9, 9, 0, 1 },
+	             { 5, 5, 5, 1, 5 },
+						   { 0, 0, 1, 5, 6 } };
+
+	int max[7][5] = { { 6, 5, 3, 5, 3 }, 
+					  { 4, 2, 7, 5, 8 }, 
+					  { 8, 2, 2, 0, 9 }, 
+					  { 5, 5, 6, 2, 9 }, 
+					  { 2, 9, 9, 3, 3 },
+					  { 6, 7, 9, 1, 7 },
+					  { 0, 1, 2, 8, 8 } };
+
+	int available_resources[5] = { 6, 3, 1, 2, 9 };
+
+	int needed[7][5];
+	int temp[7], answer[7];
+	int index = 0;
+
+	for (int k = 0; k < processes; k++)
+	{
+		temp[k] = 0;
+	}
+
+	for (int i = 0; i < processes; i++)
+	{
+		for (int j = 0; j < resources; j++)
+		{
+			needed[i][j] = max[i][j] - allocate[i][j];
+		}
+	}
+
+	for (int k = 0; k < processes; k++)
+	{
+		for (int i = 0; i < processes; i++)
+		{
+			if (temp[i] == 0)
+			{
+				int flag = 0;
+
+				for (int j = 0; j < resources; j++)
+				{
+					if (needed[i][j] > available_resources[j])
+					{
+						flag = 1;
+						break;
+					}
+				}
+
+				if (flag == 0)
+				{
+					answer[index++] = i;
+
+					for (int l = 0; l < resources; l++)
+					{
+						available_resources[l] += allocate[i][l];
+						temp[i] = 1;
+					}
+				}
+			}
+		}
+	}
+
+	cout << "The process sequence is: ";
+
+	for (int i = 0; i < processes - 1; i++)
+	{
+		cout << "Process-" << answer[i] << " ";
+	}
+	cout << "Process-" << answer[processes - 1] << "\n";
+
+	system("pause");
+	return 0;
+}
